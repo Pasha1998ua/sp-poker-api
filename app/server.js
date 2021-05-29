@@ -1,4 +1,5 @@
 const fastify = require('fastify')({ logger: false })
+fastify.register(require('fastify-socket.io'));
 
 // Routes
 fastify.post('/post-req', async (request, reply) => {
@@ -33,6 +34,17 @@ fastify.get('/get-req', async (request, reply) => {
             result: err.toString()
         })
     }
+})
+
+// Socket.io
+fastify.ready(err => {
+    if (err) throw err
+
+    fastify.io.on('connection', (socket) => {
+        socket.on('chat message', msg => {
+            fastify.io.emit('chat message', msg);
+        });
+    });
 })
 
 // Run the server!
