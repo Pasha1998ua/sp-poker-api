@@ -1,4 +1,4 @@
-const fastify = require('fastify')({ logger: true })
+const fastify = require('fastify')({ logger: false })
 
 // Routes
 fastify.post('/post-req', async (request, reply) => {
