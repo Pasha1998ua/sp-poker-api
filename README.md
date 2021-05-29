@@ -1,1 +1,1 @@
-"# sp-poker-api" 
+# sp-poker-api
