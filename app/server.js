@@ -44,23 +44,23 @@ fastify.ready(err => {
         socket.on('chatMsgEvent', msg => {
             fastify.io.in(msg.room).emit('chatMsgEvent', msg);
         });
-        socket.on('joinRoom', key => {
+        socket.on('joinRoom', (key, user) => {
             socket.join(key);
             // Emit event to inform joiners
             fastify.io.in(key).emit('chatMsgEvent', {
                 room: key,
                 userNickName: 'System',
                 sentTimestamp: Date.now(),
-                message: 'Connected to ' + key,
+                message: user + ' connected to ' + key,
             });
         })
-        socket.on('leaveRoom', key => {
+        socket.on('leaveRoom', (key, user) => {
             // Emit event to inform joiners
             fastify.io.in(key).emit('chatMsgEvent', {
                 room: key,
                 userNickName: 'System',
                 sentTimestamp: Date.now(),
-                message: 'Leave from ' + key,
+                message: user + ' leave from ' + key,
             });
             socket.leave(key);
         })
