@@ -42,8 +42,28 @@ fastify.ready(err => {
 
     fastify.io.on('connection', (socket) => {
         socket.on('chatMsgEvent', msg => {
-            fastify.io.emit('chatMsgEvent', msg);
+            fastify.io.in(msg.room).emit('chatMsgEvent', msg);
         });
+        socket.on('joinRoom', key => {
+            socket.join(key);
+            // Emit event to inform joiners
+            fastify.io.in(key).emit('chatMsgEvent', {
+                room: key,
+                userNickName: 'System',
+                sentTimestamp: Date.now(),
+                message: 'Connected to ' + key,
+            });
+        })
+        socket.on('leaveRoom', key => {
+            // Emit event to inform joiners
+            fastify.io.in(key).emit('chatMsgEvent', {
+                room: key,
+                userNickName: 'System',
+                sentTimestamp: Date.now(),
+                message: 'Leave from ' + key,
+            });
+            socket.leave(key);
+        })
     });
 })
 
